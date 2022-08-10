@@ -1,0 +1,41 @@
+{
+  "name": "#2",
+  "description": "Will F**k For Food",
+  "attributes": [
+    {
+      "trait_type": "background_color",
+      "value": "#8060B0"
+    },
+    {
+      "trait_type": "personality",
+      "value": "rockstar"
+    },
+    {
+      "trait_type": "gps_location",
+      "value": "delancey_street"
+    },
+    {
+      "trait_type": "intelligence",
+      "value": 9
+    },
+    {
+      "trait_type": "attitude",
+      "value": 10
+    },
+    {
+      "trait_type": "swagger",
+      "value": 10
+    },
+    {
+      "trait_type": "stamina_increase",
+      "display_type": "boost_percentage",
+      "value": 50
+    },
+    {
+      "trait_type": "flight_height",
+      "display_type": "boost_percentage",
+      "value": 80
+    }
+  ],
+  "image": "https://bafybeide7a73i5lsbxon4nsahuqhrpb5tlcxufpqi63v3ih3iqkdl6o7b4.ipfs.dweb.link/images/2.png"
+}
