@@ -25,6 +25,7 @@ interface Image {
 const App = () => {
   const [currentAccount, setCurrentAccount] = useState(null);
   const [images, setImages] = useState<Image[]>([]);
+  const [loading, setLoading] = useState(false);
   const checkWalletIsConnected = async () => {
     const { ethereum } = window;
 
@@ -42,6 +43,7 @@ const App = () => {
 
   const connectWalletHandler = async () => {
     const { ethereum } = window;
+    setLoading(true);
 
     if (!ethereum) alert("Please install MetaMask!");
 
@@ -50,6 +52,7 @@ const App = () => {
         method: "eth_requestAccounts",
       });
       console.log("Found an account! Address: ", accounts[0]);
+      setLoading(false);
       setCurrentAccount(accounts[0]);
     } catch (err) {
       console.log(err);
@@ -59,7 +62,7 @@ const App = () => {
   const mintNftHandler = async () => {
     try {
       const { ethereum } = window;
-
+      setLoading(true);
       if (ethereum) {
         const provider = new ethers.providers.Web3Provider(ethereum);
         const signer = provider.getSigner();
@@ -78,6 +81,7 @@ const App = () => {
         console.log("Mining. Please wait");
         await nftTxn.wait();
         setImages([]);
+        setLoading(false);
 
         console.log(
           `Mined, see transaction: https://rinkeby.etherscan.io/tx/${nftTxn.hash}`
@@ -112,6 +116,7 @@ const App = () => {
   const getTokenImages = async () => {
     const { ethereum } = window;
     if (!ethereum) return;
+    setLoading(true);
     const provider = new ethers.providers.Web3Provider(ethereum);
     const signer = provider.getSigner();
     const nftContract = new ethers.Contract(contractAddress, abi, signer);
@@ -124,6 +129,7 @@ const App = () => {
         .then((res) => res.json())
         .then((results) => setImages((images) => [...images, results]));
     }
+    setLoading(false);
   };
 
   useEffect(() => {
@@ -136,17 +142,20 @@ const App = () => {
     <div className="main-app">
       <h1>Kika's Wallet</h1>
       <div>{currentAccount ? mintNftButton() : connectWalletButton()}</div>
-
-      <div className="grid-container">
-        {images.map((image: Image, index) => (
-          <div key={index} className="d-flex justify-content-center">
-            <span>
-              <img src={image.image} alt={image.name} width="500"></img>
-              <p>{image.description}</p>
-            </span>
-          </div>
-        ))}
-      </div>
+      {loading ? (
+        <div className="grid-container">
+          {images.map((image: Image, index) => (
+            <div key={index} className="d-flex justify-content-center">
+              <span>
+                <img src={image.image} alt={image.name} width="500"></img>
+                <p>{image.description}</p>
+              </span>
+            </div>
+          ))}
+        </div>
+      ) : (
+        <span>...Loading</span>
+      )}
     </div>
   );
 };
