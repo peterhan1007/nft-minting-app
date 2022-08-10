@@ -1,20 +1,37 @@
+import React from "react";
 import { useEffect, useState } from "react";
 import { ethers } from "ethers";
+import { MetaMaskInpageProvider } from "@metamask/providers";
 
 import contract from "./contracts/NFTCollectible.json";
 import "./App.css";
 const contractAddress = "0x944C871CD83E9a6ce20c28110eF1ab484E7Ab406";
 const abi = contract.abi;
 
+import { ExternalProvider } from "@ethersproject/providers";
+
+declare global {
+  interface Window {
+    ethereum?: ExternalProvider;
+  }
+}
+
+interface Image {
+  image: string;
+  name: string;
+  description: string;
+}
+
 const App = () => {
   const [currentAccount, setCurrentAccount] = useState(null);
-  const [images, setImages] = useState([]);
+  const [images, setImages] = useState<Image[]>([]);
   const checkWalletIsConnected = async () => {
     const { ethereum } = window;
 
     if (!ethereum) console.log("Make sure you've just installed MetaMask!");
     else console.log("Wallet exists! We're ready to go!");
-    const accounts = await ethereum.request({ method: "eth_accounts" });
+
+    const accounts = await ethereum?.request?.({ method: "eth_accounts" });
 
     if (accounts.length !== 0) {
       const account = accounts[0];
@@ -29,7 +46,7 @@ const App = () => {
     if (!ethereum) alert("Please install MetaMask!");
 
     try {
-      const accounts = await ethereum.request({
+      const accounts = await ethereum?.request?.({
         method: "eth_requestAccounts",
       });
       console.log("Found an account! Address: ", accounts[0]);
@@ -94,6 +111,7 @@ const App = () => {
 
   const getTokenImages = async () => {
     const { ethereum } = window;
+    if (!ethereum) return;
     const provider = new ethers.providers.Web3Provider(ethereum);
     const signer = provider.getSigner();
     const nftContract = new ethers.Contract(contractAddress, abi, signer);
@@ -120,7 +138,7 @@ const App = () => {
       <div>{currentAccount ? mintNftButton() : connectWalletButton()}</div>
 
       <div className="grid-container">
-        {images.map((image, index) => (
+        {images.map((image: Image, index) => (
           <div key={index} className="d-flex justify-content-center">
             <span>
               <img src={image.image} alt={image.name} width="500"></img>
